@@ -33,54 +33,19 @@
                 <div class="accessory-list-wrap">
                     <div class="accessory-list col-4">
                         <ul>
-                            <li>
+                            <li v-for="(item,index) in GoodsList" :key="index">
                                 <div class="pic">
-                                    <a href="#"><img src="../assets/img/1.jpg" alt=""></a>
+                                    <a href="#"><img :src="'/static/img/' + item.productImage" alt=""></a>
                                 </div>
                                 <div class="main">
-                                    <div class="name">XX</div>
-                                    <div class="price">999</div>
+                                    <div class="name">{{item.productName}}</div>
+                                    <div class="price">{{item.productPrice}}</div>
                                     <div class="btn-area">
                                         <a href="javascript:;" class="btn btn--m">加入购物车</a>
                                     </div>
                                 </div>
                             </li>
-                            <li>
-                                <div class="pic">
-                                    <a href="#"><img src="../assets/img/2.jpg" alt=""></a>
-                                </div>
-                                <div class="main">
-                                    <div class="name">XX</div>
-                                    <div class="price">1000</div>
-                                    <div class="btn-area">
-                                        <a href="javascript:;" class="btn btn--m">加入购物车</a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="pic">
-                                    <a href="#"><img src="../assets/img/3.jpg" alt=""></a>
-                                </div>
-                                <div class="main">
-                                    <div class="name">XX</div>
-                                    <div class="price">500</div>
-                                    <div class="btn-area">
-                                        <a href="javascript:;" class="btn btn--m">加入购物车</a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="pic">
-                                    <a href="#"><img src="../assets/img/4.jpg" alt=""></a>
-                                </div>
-                                <div class="main">
-                                    <div class="name">XX</div>
-                                    <div class="price">2499</div>
-                                    <div class="btn-area">
-                                        <a href="javascript:;" class="btn btn--m">加入购物车</a>
-                                    </div>
-                                </div>
-                            </li>
+                            
                         </ul>
                     </div>
                 </div>
@@ -90,7 +55,25 @@
   </div>
 </template>
 <script>
+  import axios from 'axios'
   export default {
-
+    data(){
+      return{
+        GoodsList:''
+      }
+    },
+    methods:{
+      getGoodsList(){
+        axios.get('https://easy-mock.com/mock/59664d4d58618039284c7710/example/goods/list')
+        .then(res=>{
+          this.GoodsList = res.data.data
+          console.log(this.GoodsList);
+        })
+      }  
+      
+      },
+      created(){
+        this.getGoodsList();
+      }
   }
 </script>
