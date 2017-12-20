@@ -28,14 +28,14 @@
                         </dd>
                     </dl>
                 </div>
-
+    
                 <!-- search result accessories list -->
                 <div class="accessory-list-wrap">
                     <div class="accessory-list col-4">
                         <ul>
                             <li v-for="(item,index) in GoodsList" :key="index">
                                 <div class="pic">
-                                    <a href="#"><img :src="'/static/img/' + item.productImage" alt=""></a>
+                                    <a href="#"><img  v-lazy="'/static/img/' + item.productImage" alt=""></a>
                                 </div>
                                 <div class="main">
                                     <div class="name">{{item.productName}}</div>
@@ -64,9 +64,9 @@
     },
     methods:{
       getGoodsList(){
-        axios.get('https://easy-mock.com/mock/59664d4d58618039284c7710/example/goods/list')
+        axios.get('/goods/list')
         .then(res=>{
-          this.GoodsList = res.data.data
+          this.GoodsList = res.data.result
           console.log(this.GoodsList);
         })
       }  

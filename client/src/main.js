@@ -3,6 +3,14 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import VueLazyload from 'vue-lazyload'  //引入这个懒加载插件
+
+Vue.use(VueLazyload, {
+  preLoad: 1.3,
+  error: 'dist/error.png',
+  loading: '/static/img/ok-2.png',
+  attempt: 1
+})
 
 Vue.config.productionTip = false
 
