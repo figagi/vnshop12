@@ -21,10 +21,11 @@ mongoose.connection.on('disconnected',function(){
 
 
 router.get('/list',function(req,res,next){
-  goods.find({},function(err,doc){
-    res.json({status:"1",msg:'',result:doc})
+  let sort = req.param('sort');
+  let goodsModel = goods.find({});
+  goodsModel.sort({ 'salePrice': sort }).exec({},function (err, doc) {
+      res.json({ status: "1", msg: '', result: doc })
   })
 })
-
 
 module.exports = router;
