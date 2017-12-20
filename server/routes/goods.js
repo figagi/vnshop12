@@ -21,10 +21,32 @@ mongoose.connection.on('disconnected',function(){
 
 
 router.get('/list',function(req,res,next){
-  let sort = req.param('sort');
-  let goodsModel = goods.find({});
-  goodsModel.sort({ 'salePrice': sort }).exec({},function (err, doc) {
-      res.json({ status: "1", msg: '', result: doc })
+  let priceLevel = req.param('priceLevel');
+  let sort = req.param('sort') ? req.param('sort') : 'all';
+
+
+  let param = {};
+  if(priceLevel != 'all'){
+
+      let priceItem = [
+        [0,100],
+        [100,500],
+        [500,1000],
+        [1000,2000]
+      ];
+
+      param = {
+        salePrice:{
+          $gt:priceItem[priceLevel][0],
+          $lte:priceItem[priceLevel][1]
+        }
+      }
+
+  }
+
+  let goodsModel = goods.find(param);
+  goodsModel.sort({ 'salePrice': sort }).exec({}, function (err, doc) {
+    res.json({ status: "1", msg: '', result: doc })
   })
 })
 

@@ -13,19 +13,11 @@
                 <div class="filter stopPop" id="filter">
                     <dl class="filter-price">
                         <dt>Price:</dt>
-                        <dd><a href="javascript:void(0)">All</a></dd>
+                        <dd><a href="javascript:void(0)" :class="{'cur':priceChecked == 'all'}">All</a></dd>
                         <dd>
-                            <a href="javascript:void(0)">0 - 100</a>
+                            <a href="javascript:void(0)" :class="{'cur':priceChecked == index}" :key="index" v-for="(item,index) in priceFilter" @click="setPriceFilter(index)">{{item.startPrice}} - {{item.endPrice}}</a>
                         </dd>
-                        <dd>
-                            <a href="javascript:void(0)">100 - 500</a>
-                        </dd>
-                        <dd>
-                            <a href="javascript:void(0)">500 - 1000</a>
-                        </dd>
-                        <dd>
-                            <a href="javascript:void(0)">1000 - 2000</a>
-                        </dd>
+                        
                     </dl>
                 </div>
     
@@ -60,13 +52,32 @@
     data(){
       return{
         GoodsList:'',
-        sortFlag:true
+        sortFlag:true,
+        priceChecked:'all',
+        priceFilter:[
+            {
+                startPrice:'0',
+                endPrice:'100'
+            },
+            {
+                startPrice:'100',
+                endPrice:'500'
+            },
+            {
+                startPrice:'500',
+                endPrice:'1000'
+            },
+            {
+                startPrice:'1000',
+                endPrice:'2000'
+            },
+        ]
       }
     },
     methods:{
         getGoodsList(){
             let sort = this.sortFlag ? 1 : -1;
-            axios.get('/goods/list',{params:{'sort':sort}})
+            axios.get('/goods/list',{params:{'sort':sort,'priceLevel':this.priceChecked}})
                 .then(res=>{
                     this.GoodsList = res.data.result
                     console.log(this.GoodsList);
@@ -74,6 +85,10 @@
         },
         sortGoods(){
             this.sortFlag = !this.sortFlag;
+            this.getGoodsList();
+        },
+        setPriceFilter(index){
+            this.priceChecked = index;
             this.getGoodsList();
         }
     },
