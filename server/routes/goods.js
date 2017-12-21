@@ -21,31 +21,85 @@ mongoose.connection.on('disconnected',function(){
 
 
 router.get('/list',function(req,res,next){
+  // 接收 page 第几页
+  // 接收 pagesize 每页显示几条
   let priceLevel = req.param('priceLevel');
   let sort = req.param('sort') ? req.param('sort') : 'all';
+  let currentPage = parseInt(req.param('page')) > 0 ? parseInt(req.param('page'))
+  : 1;
+  let pagesize = parseInt(req.param('pagesize')) > 0 ? parseInt(req.param('pagesize')) : 4;
 
+  // 当第一页的时候 显示 pagesize 数据 
+  // page : 1 ,pagesize :4 , 会显示前面四条数据
+
+  // 当第二页的时候，从第几条数据开始显示
+  // 第五条到第八条，前面跳过了4条 
+
+  // 当第三页的时候，从第几条到第几条
+  // 第9条开始，到12条结束  一共跳过8条 pagesize * (page-1) 
+  
+  let skip = (currentPage - 1) * pagesize;
 
   let param = {};
+  let priceGt = '',
+      priceLte = '';
   if(priceLevel != 'all'){
 
-      let priceItem = [
-        [0,100],
-        [100,500],
-        [500,1000],
-        [1000,2000]
-      ];
+      // if (priceLevel == 1) {
+      //   priceGt = 100;
+      //   priceLte = 500;
+      // }else if( priceLevel == 2){
+      //   priceGt = 500;
+      //   priceLte = 1000;
+      // }
 
-      param = {
-        salePrice:{
-          $gt:priceItem[priceLevel][0],
-          $lte:priceItem[priceLevel][1]
-        }
+      switch (priceLevel) {
+        case '0':
+          priceGt = 0;
+          priceLte = 100;
+          break;
+      
+        case '1':
+          priceGt = 100;
+          priceLte = 500;
+          break;
+        case '2':
+          priceGt = 500;
+          priceLte = 1000;
+          break;
+        case '3':
+          priceGt = 1000;
+          priceLte = 2000;
+          break;
       }
+      param = { salePrice: { $gt: priceGt, $lte: priceLte } }
+
+      // 表驱动法
+      // let priceItem = [
+      //   [0,100],
+      //   [100,500],
+      //   [500,1000],
+      //   [1000,2000]
+      // ];
+
+      // param = {
+      //   salePrice:{
+      //     $gt:priceItem[priceLevel][0],
+      //     $lte:priceItem[priceLevel][1]
+      //   }
+      // }
+
+    
 
   }
 
   let goodsModel = goods.find(param);
-  goodsModel.sort({ 'salePrice': sort }).exec({}, function (err, doc) {
+  // if (想要排序) {
+    goodsModel.sort({ 'salePrice': sort });
+  // }
+  goodsModel.skip(skip).limit(pagesize);
+  
+  goodsModel.exec({}, function (err, doc) {
     res.json({ status: "1", msg: '', result: doc })
   })
 })
