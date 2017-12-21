@@ -58,7 +58,7 @@
         sortFlag:true,
         priceChecked:'all',
         data: [],
-        busy: false,
+        busy: true,
         page:1,
         pagesize:8,
         priceFilter:[
@@ -82,7 +82,7 @@
       }
     },
     methods:{
-        getGoodsList(){
+        getGoodsList(flag){
             let sort = this.sortFlag ? 1 : -1;
             let params = {
                 'sort':sort,
@@ -92,8 +92,22 @@
                 };
             axios.get('/goods/list',{params})
                 .then(res=>{
-                    this.GoodsList = res.data.result
-                    console.log(this.GoodsList);
+                    if(flag){ //flag 为true的时候代表，第二次加载数据
+                        // 把数据拼接起来
+                        this.GoodsList = this.GoodsList.concat(res.data.result);
+
+                        if(res.data.result.length == 0){
+                            // 把监听事件关闭
+                            this.busy = true;
+                        }else{
+                            // 把监听事件打开
+                            this.busy = false;
+                        }
+                    }else{
+                        this.GoodsList = res.data.result
+                        // 把监听事件打开
+                        this.busy = false;
+                    }
                 })
         },
         sortGoods(){
@@ -107,12 +121,16 @@
         loadMore: function() {
             this.busy = true;
             console.log("触发到底部了");
-            setTimeout(() => {
-                for (var i = 0, j = 10; i < j; i++) {
-                    this.data.push({ name: count++ });
-                }
-                this.busy = false;
-            }, 1000);
+            setTimeout(()=>{
+                this.page ++;
+                this.getGoodsList(true);
+            },1000)
+            // setTimeout(() => {
+            //     for (var i = 0, j = 10; i < j; i++) {
+            //         this.data.push({ name: count++ });
+            //     }
+            //     this.busy = false;
+            // }, 1000);
         }
     },
     created(){
