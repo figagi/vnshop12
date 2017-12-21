@@ -37,7 +37,9 @@
                                     </div>
                                 </div>
                             </li>
-                            
+                            <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+                            ...
+                            </div>
                         </ul>
                     </div>
                 </div>
@@ -48,12 +50,17 @@
 </template>
 <script>
   import axios from 'axios'
+  var count = 0;
   export default {
     data(){
       return{
         GoodsList:'',
         sortFlag:true,
         priceChecked:'all',
+        data: [],
+        busy: false,
+        page:1,
+        pagesize:8,
         priceFilter:[
             {
                 startPrice:'0',
@@ -77,7 +84,13 @@
     methods:{
         getGoodsList(){
             let sort = this.sortFlag ? 1 : -1;
-            axios.get('/goods/list',{params:{'sort':sort,'priceLevel':this.priceChecked}})
+            let params = {
+                'sort':sort,
+                'priceLevel':this.priceChecked,
+                'page':this.page,
+                'pagesize':this.pagesize
+                };
+            axios.get('/goods/list',{params})
                 .then(res=>{
                     this.GoodsList = res.data.result
                     console.log(this.GoodsList);
@@ -90,6 +103,16 @@
         setPriceFilter(index){
             this.priceChecked = index;
             this.getGoodsList();
+        },
+        loadMore: function() {
+            this.busy = true;
+            console.log("触发到底部了");
+            setTimeout(() => {
+                for (var i = 0, j = 10; i < j; i++) {
+                    this.data.push({ name: count++ });
+                }
+                this.busy = false;
+            }, 1000);
         }
     },
     created(){
