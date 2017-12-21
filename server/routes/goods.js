@@ -3,6 +3,7 @@ var router = express.Router();
 var mongoose = require('mongoose');
 
 var goods = require('../models/goods');
+var user = require('../models/user');
 
 // mongoose.connect('mongodb://localhost/shop');
 mongoose.connect('mongodb://47.93.231.75/shop');
@@ -103,5 +104,55 @@ router.get('/list',function(req,res,next){
     res.json({ status: "1", msg: '', result: doc })
   })
 })
+router.post('/addCart',function(req,res,next){
 
+  var productId = req.body.productId;
+  var userId = 100000077;
+
+  user.findOne({userId:userId},function(err,userDoc){
+
+    let goodsItem = '';
+    // 当我们添加商品的时候，判断购物车里面有没有这个商品
+    userDoc.cartList.forEach(function(item){
+      if(item.productId == productId){
+          goodsItem = item;
+          item.productNum++;
+      }
+    })
+
+    if (goodsItem){
+      userDoc.save(function (err2, doc2) {
+        res.json({
+          status: '0',
+          msg: '',
+          result: '商品数量添加成功'
+        })
+      })
+    }else{
+      goods.findOne({ 'productId': productId }, function (err, goodsDoc) {
+        goodsDoc.productNum = 1;
+        userDoc.cartList.push(goodsDoc);
+        userDoc.save(function (err2, doc2) {
+          res.json({
+            status: '0',
+            msg: '',
+            result: '加入购物车成功'
+          })
+        })
+      })
+    }
+
+
+
+
+
+
+
+
+
+
+
+  })
+
+})
 module.exports = router;
