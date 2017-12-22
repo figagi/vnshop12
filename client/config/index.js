@@ -13,7 +13,11 @@ module.exports = {
     proxyTable: {
       "/goods/*":{
         target:'http://localhost:3001'
-      }
+      },
+      "/users/*":{
+        target:'http://localhost:3001'
+      },
+
     },
 
     // Various Dev Server settings
