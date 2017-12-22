@@ -17,7 +17,12 @@ module.exports = {
       "/users/*":{
         target:'http://localhost:3001'
       },
-
+      '/api/**': {
+          target: 'http://localhost:3001',
+          pathRewrite:{
+              '^/api':'/'
+          }
+      }
     },
 
     // Various Dev Server settings

@@ -24,6 +24,10 @@ router.post('/login',function(req,res,next){
         path:'/',
         maxAge:1000 * 60 * 60 * 24
       })
+      res.cookie('userName',doc.userName,{
+        path:'/',
+        maxAge:1000 * 60 * 60 * 24
+      })
 
       if(doc){
         res.json({
@@ -35,6 +39,66 @@ router.post('/login',function(req,res,next){
         })
       }
     }
+  })
+})
+
+router.post('/checkLogin',function(req,res,next){
+  if(req.cookies.userId){
+    res.json({
+      status:'0',
+      result:req.cookies.userName
+    })
+  }else{
+    res.json({
+      status:1,
+      msg:'未登录',
+      result:''
+    })
+  }
+})
+
+
+router.post('/cartList',function(req,res,next){
+  let userId = req.cookies.userId;
+  user.findOne({userId:userId},function(err,doc){
+    res.json({
+      status:0,
+      msg:'',
+      result:doc.cartList
+    })
+  })
+})
+
+router.post('/cartEdit',function(req,res,next){
+  let userId = req.cookies.userId,
+  productId = req.body.productId,
+  productNum = req.body.productNum,
+  checked = req.body.checked;
+  console.log(checked)
+  user.update({'userId':userId,"cartList.productId":productId},{
+    "cartList.$.productNum":productNum,
+    "cartList.$.checked":checked,
+  },function(){
+    res.json({
+      status:0,
+      msg:'',
+      result:'修改购物车成功'
+    })
+  })
+})
+
+router.post('/editCheckAll',function(req,res,next){
+  let userId = req.cookies.userId,
+    checkAll = req.body.checkAll;
+
+  user.findOne({'userId':userId},function(err,user){
+      user.cartList.forEach(item=>{
+        item.checked = checkAll;
+      })
+
+      user.save(function(err,doc){
+        res.json({status:0,msg:'',result:'操作成功'})
+      })
   })
 })
 module.exports = router;

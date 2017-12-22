@@ -72,7 +72,7 @@
 
             </div>
             <div class="login-wrap">
-              <a href="javascript:;" class="btn-login" >登录</a>
+              <a href="javascript:;" class="btn-login"  @click="login">登录</a>
             </div>
           </div>
         </div>
@@ -104,7 +104,16 @@
                   this.nickName = res.data.result.userName;
                   this.loginModalFlag = false;
               })
+          },
+          checkLogin(){
+              axios.post('/users/checkLogin')
+              .then(res=>{
+                this.nickName = res.data.result
+             })
           }
+      },
+      created(){
+          this.checkLogin()
       }
   }
 </script>

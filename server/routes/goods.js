@@ -131,6 +131,7 @@ router.post('/addCart',function(req,res,next){
     }else{
       goods.findOne({ 'productId': productId }, function (err, goodsDoc) {
         goodsDoc.productNum = 1;
+        goodsDoc.checked = 1;
         userDoc.cartList.push(goodsDoc);
         userDoc.save(function (err2, doc2) {
           res.json({

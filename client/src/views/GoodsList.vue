@@ -1,5 +1,8 @@
 <template>
   <div>
+      <NavHead/>
+    <BredCrumb>商品列表</BredCrumb>
+    
       <div class="accessory-result-page accessory-page">
         <div class="container">
             <div class="filter-nav">
@@ -57,12 +60,16 @@
   </div>
 </template>
 <script>
+import NavHead from '@/components/NavHead'
+    import BredCrumb from '@/components/BredCrumb'
   import axios from 'axios'
   import Modal from '@/components/Modal'
   var count = 0;
   export default {
     components:{
-        Modal
+        Modal,
+        NavHead,
+        BredCrumb
     },
     data(){
       return{
@@ -103,7 +110,7 @@
                 'page':this.page,
                 'pagesize':this.pagesize
                 };
-            axios.get('/goods/list',{params})
+           this.$http.get('/goods/list',{params})
                 .then(res=>{
                     if(flag){ //flag 为true的时候代表，第二次加载数据
                         // 把数据拼接起来
